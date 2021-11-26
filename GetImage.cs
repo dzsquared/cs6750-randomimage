@@ -40,7 +40,6 @@ namespace Company.Function
             await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
             {
                 blobItems.Add(blobItem);
-                // https://omscs.blob.core.windows.net/carplay/IMG_9950.JPG
             }
 
             // confirm imageId is equal to or less than length of blobItems
