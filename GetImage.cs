@@ -50,14 +50,18 @@ namespace Company.Function
             }
 
             // scale the current minute to the number of images in the container
-            int imageIndex = Convert.ToInt32(Math.Round(DateTime.Now.Minute * (blobItems.Count / 60.0)));
-            if (imageIndex + imageId - 1 >= blobItems.Count)
+            int currentMinute = DateTime.Now.Minute;
+            int imageIndex = currentMinute % blobItems.Count;
+            imageIndex += imageId;
+
+            if (imageIndex >= blobItems.Count)
             {
-                imageIndex = 0 + imageId - 1;
+                imageIndex = imageIndex - blobItems.Count;
             }
 
             // log the image blob name
             log.LogInformation($"Image blob name: {blobItems[imageIndex].Name}");
+
 
             // get image data from blob
             BlobClient blobClient = containerClient.GetBlobClient(blobItems[imageIndex].Name);
