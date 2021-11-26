@@ -3,6 +3,10 @@
 Display images in an alternating order based on a querystring ID.  Used in randomizing the order in which prototypes are presented to survey participants.
 
 
+The Azure Function returns the image content, replacing the image link in the PeerSurvey interface:
+![in-use.png](in-use.png)
+
+
 ## Environment Overview
 
 ### Storage Account
@@ -16,6 +20,8 @@ Create a storage account and a blob storage container.  Upload your prototype im
 
 ## Example Use
 The 2 images below will switch places every minute.
+
+The image URL is the function URL + a querystring for the image placement.  For example the first one is https://image-selector.azurewebsites.net/api/GetImage?imageID=1.
 
 
 Image 1:
