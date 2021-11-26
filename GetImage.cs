@@ -16,7 +16,7 @@ namespace Company.Function
     {
         [FunctionName("GetImage")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -43,16 +43,24 @@ namespace Company.Function
                 // https://omscs.blob.core.windows.net/carplay/IMG_9950.JPG
             }
 
+            // confirm imageId is equal to or less than length of blobItems
+            if (imageId > blobItems.Count || imageId == 0)
+            {
+                return new BadRequestObjectResult("imageID higher than total number of images available");
+            }
+
             // scale the current minute to the number of images in the container
             int imageIndex = Convert.ToInt32(Math.Round(DateTime.Now.Minute * (blobItems.Count / 60.0)));
-            int randomNumber = 0;
+            if (imageIndex + imageId - 1 >= blobItems.Count)
+            {
+                imageIndex = 0 + imageId - 1;
+            }
 
-            // get image at random index
-            // string imageUrl = blobServiceClient.Uri.ToString() + blobItems[randomNumber].Name;
-            // log.LogInformation(imageUrl);
+            // log the image blob name
+            log.LogInformation($"Image blob name: {blobItems[imageIndex].Name}");
 
             // get image data from blob
-            BlobClient blobClient = containerClient.GetBlobClient(blobItems[randomNumber].Name);
+            BlobClient blobClient = containerClient.GetBlobClient(blobItems[imageIndex].Name);
             BlobDownloadInfo downloadInfo = await blobClient.DownloadAsync();
 
             return new OkObjectResult(downloadInfo.Content);
